@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MELTÉA — Artisan Brew Lab & Direct Order</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #FAF7F2;
+      color: #3E2723;
+    }
+    .font-brand {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    /* Artisan Tapered Glass Tumbler */
+    .glass-cup-body {
+      border-radius: 8px 8px 38px 38px;
+      box-shadow: 
+        inset 2px 0 8px rgba(255, 255, 255, 0.8),
+        inset -2px 0 8px rgba(255, 255, 255, 0.5),
+        inset 0 -10px 18px rgba(62, 39, 35, 0.08),
+        0 24px 40px -12px rgba(62, 39, 35, 0.16);
+    }
+    .glass-gloss-overlay {
+      background: linear-gradient(
+        108deg,
+        rgba(255, 255, 255, 0.55) 0%,
+        rgba(255, 255, 255, 0.25) 18%,
+        rgba(255, 255, 255, 0) 34%,
+        rgba(255, 255, 255, 0) 70%,
+        rgba(255, 255, 255, 0.22) 88%,
+        rgba(255, 255, 255, 0.48) 100%
+      );
+    }
+    .ice-bobbing-1 {
+      animation: floatIce1 4.2s ease-in-out infinite alternate;
+    }
+    .ice-bobbing-2 {
+      animation: floatIce2 3.7s ease-in-out infinite alternate-reverse;
+    }
+    .ice-bobbing-3 {
+      animation: floatIce3 4.5s ease-in-out infinite alternate;
+    }
+    @keyframes floatIce1 {
+      0% { transform: translateY(0px) rotate(-9deg); }
+      100% { transform: translateY(-7px) rotate(-14deg); }
+    }
+    @keyframes floatIce2 {
+      0% { transform: translateY(0px) rotate(11deg); }
+      100% { transform: translateY(-8px) rotate(16deg); }
+    }
+    @keyframes floatIce3 {
+      0% { transform: translateY(0px) rotate(2deg); }
+      100% { transform: translateY(-6px) rotate(-4deg); }
+    }
+    .transition-brew {
+      transition: all 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    /* Custom Scrollbar for Drawer */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #FAF7F2;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #D7CCC8;
+      border-radius: 99px;
+    }
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #receipt-print-area, #receipt-print-area * {
+        visibility: visible;
+      }
+      #receipt-print-area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        box-shadow: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="antialiased min-h-screen pb-28 lg:pb-12 selection:bg-amber-200">
+
+  <!-- Toast Notification Banner (Replaces alert) -->
+  <div id="toast-notification" class="fixed top-5 right-5 z-[100] transform translate-x-[150%] transition-transform duration-300 bg-[#3E2723] text-[#FAF7F2] px-4 py-3 rounded-2xl shadow-xl border border-[#C88A4B]/40 flex items-center gap-2.5 text-xs font-semibold">
+    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+    <span id="toast-message">Notifikasi</span>
+  </div>
+
+  <!-- HEADER WITH CUSTOM TRIANGULAR 3-CUBE SVG LOGO -->
+  <header class="bg-[#FAF7F2]/90 backdrop-blur-md border-b border-[#E6DFD5] sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex justify-between items-center">
+      
+      <!-- Brand Identity: Triangular Stack of 3 Melting Cubes (No Giant 'M') -->
+      <div class="flex items-center gap-3.5">
+        <div class="w-11 h-11 rounded-2xl bg-white border border-[#E6DFD5] shadow-xs flex items-center justify-center p-1.5">
+          <!-- Custom SVG Logo: Triangular Stack of 3 Melting Ice Cubes (Water Top, Milk Bottom-Left, Tea Bottom-Right) -->
+          <svg viewBox="0 0 64 64" class="w-full h-full overflow-visible" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Top Cube: Clear Water Ice (Melting Drip) -->
+            <g transform="translate(18, 4)">
+              <path d="M14 2L26 8.5V21.5L14 28L2 21.5V8.5L14 2Z" fill="#E0F2FE" stroke="#3E2723" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M2 8.5L14 15L26 8.5" stroke="#3E2723" stroke-width="1.6" stroke-linejoin="round"/>
+              <path d="M14 15V28" stroke="#3E2723" stroke-width="1.6"/>
+              <!-- Water Melt Drip -->
+              <path d="M14 28C14 31 12 33 14 34.5C16 33 14 31 14 28Z" fill="#7DD3FC" stroke="#3E2723" stroke-width="1.2"/>
+              <circle cx="9" cy="9" r="1.2" fill="white"/>
+            </g>
+            <!-- Bottom Left Cube: Creamy Milk Cube -->
+            <g transform="translate(5, 29)">
+              <path d="M13 2L24 8V20L13 26L2 20V8L13 2Z" fill="#FFFDF9" stroke="#3E2723" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M2 8L13 14L24 8" stroke="#3E2723" stroke-width="1.6" stroke-linejoin="round"/>
+              <path d="M13 14V26" stroke="#3E2723" stroke-width="1.6"/>
+              <!-- Milk Drip -->
+              <path d="M6 22C6 24.5 8 25.5 9.5 24" stroke="#3E2723" stroke-width="1.4" stroke-linecap="round"/>
+            </g>
+            <!-- Bottom Right Cube: Roasted Tea Cube -->
+            <g transform="translate(33, 29)">
+              <path d="M13 2L24 8V20L13 26L2 20V8L13 2Z" fill="#C88A4B" stroke="#3E2723" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M2 8L13 14L24 8" stroke="#3E2723" stroke-width="1.6" stroke-linejoin="round"/>
+              <path d="M13 14V26" stroke="#3E2723" stroke-width="1.6"/>
+              <!-- Tiny Tea Leaf Accent -->
+              <path d="M18 16C20.5 15 21.5 17 19.5 19C18 18 17.5 17 18 16Z" fill="#4D7C0F" stroke="#3E2723" stroke-width="1"/>
+            </g>
+          </svg>
+        </div>
+
+        <div>
+          <h1 class="text-xl sm:text-2xl font-bold font-brand tracking-wider text-[#3E2723] leading-none">
+            MELTÉA
+          </h1>
+          <p class="text-[10px] sm:text-[11px] font-bold tracking-[0.2em] uppercase text-[#C88A4B] mt-1">
+            Artisan Brew Lab
+          </p>
+        </div>
+      </div>
+
+      <!-- Cart Trigger Button in Header -->
+      <div class="flex items-center gap-2">
+        <button onclick="openCheckoutDrawer()" class="relative bg-white hover:bg-[#F3ECE1] text-[#3E2723] border border-[#E6DFD5] px-4 py-2.5 rounded-2xl font-bold text-xs flex items-center gap-2 transition shadow-xs active:scale-95">
+          <svg class="w-4 h-4 text-[#C88A4B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+          </svg>
+          <span class="hidden sm:inline">Keranjang</span>
+          <span id="header-cart-badge" class="bg-[#3E2723] text-[#FAF7F2] text-[10px] font-extrabold px-2 py-0.5 rounded-full">0</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- STICKY MOBILE SUGAR METER BAR (Always Visible on Mobile Scroll) -->
+    <div class="lg:hidden bg-[#FAF7F2]/95 border-t border-[#E6DFD5] px-4 py-2">
+      <div class="max-w-6xl mx-auto">
+        <div class="flex items-center justify-between text-[11px] font-bold mb-1">
+          <span class="text-[#3E2723] flex items-center gap-1">
+            <span>Sugar Meter:</span>
+          </span>
+          <span id="mobile-sugar-level-badge" class="text-teal-800 font-extrabold">Total ±16g (32% batas harian)</span>
+        </div>
+        <div class="w-full bg-[#E6DFD5] h-1.5 rounded-full overflow-hidden">
+          <div id="mobile-sugar-bar" class="h-full transition-brew bg-emerald-600" style="width: 32%"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 pt-6 sm:pt-8">
+    
+    <!-- Intro Banner -->
+    <div class="text-center max-w-2xl mx-auto mb-8">
+      <span class="inline-block text-[11px] font-extrabold tracking-widest uppercase text-[#8D5B2B] bg-[#F3E8D8] px-3.5 py-1 rounded-full mb-2">
+        Zero Water-Dilution Experience
+      </span>
+      <h2 class="text-2xl sm:text-4xl font-extrabold text-[#3E2723] tracking-tight">
+        Racik Gelasmu & Pesan Langsung
+      </h2>
+      <p class="text-[#6D4C41] mt-2 text-xs sm:text-sm leading-relaxed">
+        Pilih basis susu, atur kadar manis sesuai batas kesehatan harian, dan uji ketahanan es batu rasa kami sebelum langsung memesan.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- LEFT COLUMN: Interactive Artisan Cup Visualizer & Melting Simulator (5 cols) -->
+      <div class="lg:col-span-5 bg-white p-6 rounded-3xl shadow-sm border border-[#E6DFD5] lg:sticky lg:top-20">
+        
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-[11px] font-bold text-[#8D6E63] uppercase tracking-wider">Live Cup Simulator</span>
+          <span id="badge-status" class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-teal-50 text-teal-800 border border-teal-200/70">
+            Never-Watered
+          </span>
+        </div>
+
+        <!-- ARTISAN GLASS TUMBLER (No ml lines, tilted straw, floating cubes, condensation) -->
+        <div class="relative w-64 h-88 mx-auto my-2 flex flex-col items-center select-none justify-center py-2">
+          
+          <!-- Realistic Angled Glass Straw -->
+          <div class="absolute top-0 left-28 w-3 h-40 bg-gradient-to-r from-amber-100/90 via-white/85 to-amber-200/90 rounded-full shadow-md z-40 transform rotate-[13deg] pointer-events-none border border-white/70">
+            <div class="w-full h-full bg-gradient-to-b from-transparent via-[#C88A4B]/25 to-[#3E2723]/40 rounded-full"></div>
+          </div>
+
+          <!-- Glass Lid / Rim Cap -->
+          <div class="relative w-48 h-4 bg-gradient-to-b from-white/95 to-stone-200/80 backdrop-blur-md rounded-t-xl border-t border-x border-white shadow-xs z-30 flex items-center justify-center">
+            <div class="w-16 h-1 bg-stone-300/80 rounded-full"></div>
+          </div>
+
+          <!-- Glass Cup Main Body -->
+          <div class="relative w-44 h-68 glass-cup-body bg-stone-100/60 p-1.5 flex flex-col justify-end overflow-hidden border border-white/80 backdrop-blur-[2px] z-20">
+            
+            <!-- Specular Glass Reflections -->
+            <div class="absolute inset-0 glass-gloss-overlay pointer-events-none z-30"></div>
+            
+            <!-- Condensation Droplets -->
+            <div class="absolute top-7 left-2.5 w-1.5 h-2 bg-white/80 rounded-full pointer-events-none z-30"></div>
+            <div class="absolute top-16 right-3 w-1.5 h-3 bg-white/70 rounded-full pointer-events-none z-30"></div>
+            <div class="absolute top-32 left-3 w-2 h-2.5 bg-white/60 rounded-full pointer-events-none z-30"></div>
+
+            <!-- Dynamic Liquid Layer -->
+            <div id="liquid-layer" class="w-full h-[88%] rounded-b-[30px] transition-brew relative flex flex-col justify-start overflow-hidden shadow-inner" style="background-color: #C88A4B;">
+              
+              <!-- Liquid Surface Wave & Micro-foam -->
+              <div class="w-full h-4 bg-white/40 backdrop-blur-[1px] border-b border-white/30 z-20 flex items-center justify-center">
+                <div class="w-24 h-1 bg-white/45 rounded-full"></div>
+              </div>
+
+              <!-- Naturally Floating Ice Cubes -->
+              <div id="cube-container" class="relative w-full h-40 z-10 px-2 pt-2">
+                <!-- Rendered via JS -->
+              </div>
+
+              <!-- Swirling Cream Gradient at Bottom -->
+              <div id="liquid-milk-swirl" class="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-white/55 via-white/25 to-transparent pointer-events-none transition-brew"></div>
+            </div>
+
+            <!-- Weighted Thick Glass Base -->
+            <div class="absolute bottom-0 left-0 right-0 h-3.5 bg-gradient-to-t from-white/95 via-stone-200/60 to-transparent border-t border-white/50 rounded-b-[38px] pointer-events-none z-20"></div>
+          </div>
+
+          <!-- Ambient Table Shadow -->
+          <div class="w-36 h-3 bg-[#3E2723]/10 rounded-full blur-md mt-2"></div>
+        </div>
+
+        <!-- Time-Lapse Melting Simulator Slider -->
+        <div class="bg-[#FAF7F2] p-4 rounded-2xl border border-[#E6DFD5] mt-3">
+          <div class="flex justify-between items-center text-xs font-bold text-[#3E2723] mb-2">
+            <span class="flex items-center gap-1.5">
+              <svg class="w-4 h-4 text-[#C88A4B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              Simulasi Waktu Pencairan:
+            </span>
+            <span id="melt-time-label" class="text-[#3E2723] font-extrabold text-xs bg-[#F3E8D8] px-2.5 py-0.5 rounded-md">
+              0 Menit (Fresh)
+            </span>
+          </div>
+
+          <input type="range" id="melt-slider" min="0" max="60" step="15" value="0" 
+            class="w-full h-2 bg-[#E6DFD5] rounded-lg appearance-none cursor-pointer accent-[#3E2723]">
+          
+          <div class="flex justify-between text-[10px] text-[#8D6E63] mt-1 font-medium">
+            <span>0m (Fresh)</span>
+            <span>15m</span>
+            <span>30m</span>
+            <span>45m</span>
+            <span>60m (Melted)</span>
+          </div>
+
+          <p id="melt-status-desc" class="mt-2.5 pt-2.5 border-t border-[#E6DFD5] text-xs text-[#5D4037] leading-relaxed font-medium">
+            Es batu masih beku padat. Komposisi susu dan seduhan teh baru berpadu sempurna.
+          </p>
+        </div>
+
+        <!-- Daily Sugar Meter & Flavor Intensity Gauges -->
+        <div class="mt-4 p-4 bg-[#FAF7F2] rounded-2xl border border-[#E6DFD5] space-y-3 text-xs">
+          
+          <!-- Daily Sugar Meter -->
+          <div>
+            <div class="flex justify-between font-bold mb-1 items-center">
+              <span class="text-[#3E2723] flex items-center gap-1.5">
+                <span>Sugar Meter:</span>
+              </span>
+              <span id="sugar-level-badge" class="text-teal-800 font-extrabold text-xs">Aman & Terkontrol</span>
+            </div>
+            <div class="w-full bg-[#E6DFD5] h-2.5 rounded-full overflow-hidden">
+              <div id="sugar-bar" class="h-full transition-brew bg-teal-600" style="width: 55%"></div>
+            </div>
+            <div id="sugar-warning-box" class="mt-1.5 text-[11px] font-medium text-teal-900 bg-teal-50/90 border border-teal-200/80 rounded-xl p-2.5 leading-snug">
+              Manis seimbang dengan karakter aroma teh panggang dan gurih susu yang harmonis.
+            </div>
+          </div>
+
+          <!-- Flavor Stability & Creaminess -->
+          <div class="grid grid-cols-2 gap-3 pt-1">
+            <div>
+              <div class="flex justify-between font-bold mb-1 text-[11px]">
+                <span class="text-[#6D4C41]">Kepekatan Teh:</span>
+                <span id="tea-val-text" class="text-[#3E2723] font-extrabold">85%</span>
+              </div>
+              <div class="w-full bg-[#E6DFD5] h-1.5 rounded-full overflow-hidden">
+                <div id="tea-bar" class="bg-[#3E2723] h-full transition-brew" style="width: 85%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between font-bold mb-1 text-[11px]">
+                <span class="text-[#6D4C41]">Creaminess:</span>
+                <span id="creamy-val-text" class="text-[#3E2723] font-extrabold">75%</span>
+              </div>
+              <div class="w-full bg-[#E6DFD5] h-1.5 rounded-full overflow-hidden">
+                <div id="creamy-bar" class="bg-[#C88A4B] h-full transition-brew" style="width: 75%"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN: Customer Customization Controls (7 cols) -->
+      <div class="lg:col-span-7 space-y-6">
+
+        <!-- STEP 1: Pilihan Base Teh (Base Tea) -->
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-[#E6DFD5]">
+          <div class="mb-1">
+            <h3 class="font-extrabold text-[#3E2723] text-base">1. Pilih Base Teh (Tea Base)</h3>
+          </div>
+          <p class="text-xs text-[#6D4C41] mb-4">Ekstraksi daun teh pekat sebagai fondasi rasa utama:</p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <!-- Signature Jasmine Tea -->
+            <button onclick="setTeaBase('jasmine')" class="tea-btn border-2 border-[#3E2723] bg-[#FAF7F2] p-4 rounded-2xl text-left transition hover:border-[#C88A4B] flex flex-col justify-between" data-tea="jasmine">
+              <div>
+                <span class="inline-block text-[10px] font-extrabold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md mb-2">Signature Classic</span>
+                <span class="font-extrabold block text-sm text-[#3E2723]">Signature Jasmine Tea</span>
+                <span class="text-[11px] text-[#6D4C41] mt-1 block leading-snug">Racikan daun teh melati pekat yang bold, wangi floral lembut, dan menyegarkan.</span>
+              </div>
+              <span class="text-xs font-extrabold text-[#3E2723] mt-3 block pt-2 border-t border-[#E6DFD5]">Base Rp 20.000</span>
+            </button>
+
+            <!-- Golden Osmanthus Tea -->
+            <button onclick="setTeaBase('osmanthus')" class="tea-btn border-2 border-[#E6DFD5] p-4 rounded-2xl text-left transition hover:border-[#C88A4B] flex flex-col justify-between" data-tea="osmanthus">
+              <div>
+                <span class="inline-block text-[10px] font-extrabold uppercase tracking-wider text-amber-800 bg-amber-100/70 px-2 py-0.5 rounded-md mb-2">Aromatic Series</span>
+                <span class="font-extrabold block text-sm text-[#3E2723]">Golden Osmanthus Tea</span>
+                <span class="text-[11px] text-[#6D4C41] mt-1 block leading-snug">Teh hitam pekat dengan infusi bunga osmanthus beraroma manis aprikot-persik.</span>
+              </div>
+              <span class="text-xs font-extrabold text-[#C88A4B] mt-3 block pt-2 border-t border-[#E6DFD5]">+Rp 3.000</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 2: Basis Susu (Milk Base) -->
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-[#E6DFD5]">
+          <div class="mb-1">
+            <h3 class="font-extrabold text-[#3E2723] text-base">2. Pilih Basis Susu (Milk Base)</h3>
+          </div>
+          <p class="text-xs text-[#6D4C41] mb-4">Tersedia susu sapi segar maupun opsi nabati ramah intoleransi laktosa:</p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <!-- Fresh Milk -->
+            <button onclick="setMilkBase('fresh')" class="milk-btn border-2 border-[#3E2723] bg-[#FAF7F2] p-4 rounded-2xl text-left transition hover:border-[#C88A4B] flex flex-col justify-between" data-milk="fresh">
+              <div>
+                <span class="inline-block text-[10px] font-extrabold uppercase tracking-wider text-[#8D5B2B] bg-[#F3E8D8] px-2 py-0.5 rounded-md mb-2">Classic Creamy</span>
+                <span class="font-extrabold block text-sm text-[#3E2723]">Signature Fresh Milk</span>
+                <span class="text-[11px] text-[#6D4C41] mt-1 block leading-snug">Susu sapi segar murni, tekstur gurih klasik yang menyatu dengan teh pekat.</span>
+              </div>
+              <span class="text-xs font-extrabold text-[#3E2723] mt-3 block pt-2 border-t border-[#E6DFD5]">Termasuk (Rp 0)</span>
+            </button>
+
+            <!-- Oatside Oat Milk -->
+            <button onclick="setMilkBase('oatside')" class="milk-btn border-2 border-[#E6DFD5] p-4 rounded-2xl text-left transition hover:border-[#C88A4B] flex flex-col justify-between" data-milk="oatside">
+              <div>
+                <span class="inline-block text-[10px] font-extrabold uppercase tracking-wider text-teal-800 bg-teal-50 px-2 py-0.5 rounded-md mb-2">100% Lactose-Free</span>
+                <span class="font-extrabold block text-sm text-[#3E2723]">Oatside Oat Milk</span>
+                <span class="text-[11px] text-[#6D4C41] mt-1 block leading-snug">Susu oat nabati bebas laktosa dengan aroma malt gandum lembut, aman di perut.</span>
+              </div>
+              <span class="text-xs font-extrabold text-[#C88A4B] mt-3 block pt-2 border-t border-[#E6DFD5]">+Rp 3.000</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 3: Tingkat Manis (Sweetness Level - Clean UI, Grams Shown in Daily Sugar Meter) -->
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-[#E6DFD5]">
+          <div class="mb-1">
+            <h3 class="font-extrabold text-[#3E2723] text-base">3. Tingkat Manis (Sweetness Level)</h3>
+          </div>
+          <p class="text-xs text-[#6D4C41] mb-4">Pilih tingkat kemanisan racikanmu (total kadar gula otomatis terhitung pada meteran di samping):</p>
+
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+            <!-- No Sugar -->
+            <button onclick="setSugarLevel(0)" class="sugar-btn p-3 rounded-2xl border-2 border-[#E6DFD5] text-left transition hover:border-[#C88A4B]" data-sugar="0">
+              <span class="text-[10px] font-extrabold uppercase text-teal-800 bg-teal-50 px-1.5 py-0.5 rounded">0% Pure</span>
+              <span class="text-sm font-extrabold block text-[#3E2723] mt-1.5">No Sugar</span>
+              <span class="text-[11px] text-[#6D4C41] block leading-tight mt-1">Tanpa sirup gula tambahan</span>
+            </button>
+
+            <!-- Quarter Sweet -->
+            <button onclick="setSugarLevel(25)" class="sugar-btn p-3 rounded-2xl border-2 border-[#E6DFD5] text-left transition hover:border-[#C88A4B]" data-sugar="25">
+              <span class="text-[10px] font-extrabold uppercase text-emerald-800 bg-emerald-50 px-1.5 py-0.5 rounded">25%</span>
+              <span class="text-sm font-extrabold block text-[#3E2723] mt-1.5">Quarter Sweet</span>
+              <span class="text-[11px] text-[#6D4C41] block leading-tight mt-1">Manis tipis, wangi teh dominan</span>
+            </button>
+
+            <!-- Half Sweet (Default Recommended) -->
+            <button onclick="setSugarLevel(50)" class="sugar-btn p-3 rounded-2xl border-2 border-[#3E2723] bg-[#FAF7F2] text-left transition hover:border-[#C88A4B]" data-sugar="50">
+              <span class="text-[10px] font-extrabold uppercase text-[#8D5B2B] bg-[#F3E8D8] px-1.5 py-0.5 rounded">50% Pas</span>
+              <span class="text-sm font-extrabold block text-[#3E2723] mt-1.5">Half Sweet</span>
+              <span class="text-[11px] text-[#6D4C41] block leading-tight mt-1">Seimbang antara teh & susu</span>
+            </button>
+
+            <!-- Less Sweet -->
+            <button onclick="setSugarLevel(70)" class="sugar-btn p-3 rounded-2xl border-2 border-[#E6DFD5] text-left transition hover:border-[#C88A4B]" data-sugar="70">
+              <span class="text-[10px] font-extrabold uppercase text-amber-800 bg-amber-50 px-1.5 py-0.5 rounded">70%</span>
+              <span class="text-sm font-extrabold block text-[#3E2723] mt-1.5">Less Sweet</span>
+              <span class="text-[11px] text-[#6D4C41] block leading-tight mt-1">Manis ringan menyegarkan</span>
+            </button>
+
+            <!-- Normal Sweet -->
+            <button onclick="setSugarLevel(100)" class="sugar-btn p-3 rounded-2xl border-2 border-[#E6DFD5] text-left transition hover:border-[#C88A4B]" data-sugar="100">
+              <span class="text-[10px] font-extrabold uppercase text-rose-800 bg-rose-50 px-1.5 py-0.5 rounded">100%</span>
+              <span class="text-sm font-extrabold block text-[#3E2723] mt-1.5">Normal Sweet</span>
+              <span class="text-[11px] text-[#6D4C41] block leading-tight mt-1">Takaran standar</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 4: Tipe Es Batu Pendingin (Clean Labels Without Fraction Breakdown) -->
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-[#E6DFD5]">
+          <div class="mb-1">
+            <h3 class="font-extrabold text-[#3E2723] text-base">4. Tipe Es Batu Pendingin</h3>
+          </div>
+          <p class="text-xs text-[#6D4C41] mb-4">Pilih balok es beku beraroma teh atau susu agar minuman tetap pekat hingga tetes terakhir:</p>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            
+            <!-- Hybrid Cubes -->
+            <button onclick="setIceType('hybrid')" class="ice-btn border-2 border-[#3E2723] bg-[#FAF7F2] p-4 rounded-2xl text-left transition hover:border-[#C88A4B] flex flex-col justify-between" data-ice="hybrid">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-[10px] font-extrabold uppercase tracking-wider text-teal-800 bg-teal-50 px-2.5 py-0.5 rounded-full">Signature Mix</span>
+                  <span class="text-xs font-extrabold text-[#3E2723]">Termasuk (Rp 0)</span>
+                </div>
+                <span class="font-extrabold block text-sm text-[#3E2723]">Hybrid Cubes</span>
+                <span class="text-xs text-[#6D4C41] mt-1 block leading-snug">Paduan balok es teh pekat dan es susu beku untuk keseimbangan rasa yang stabil.</span>
+              </div>
+            </button>
+
+            <!-- Frozen Milk Cubes -->
+            <button onclick="setIceType('milk')" class="ice-btn border-2 border-[#E6DFD5] p-4 rounded-2xl text-left transition hover:border-[#C88A4B] flex flex-col justify-between" data-ice="milk">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-[10px] font-extrabold uppercase tracking-wider text-[#8D5B2B] bg-[#F3E8D8] px-2.5 py-0.5 rounded-full">Extra Creamy</span>
+                  <span class="text-xs font-extrabold text-[#C88A4B]">+Rp 2.000</span>
+                </div>
+                <span class="font-extrabold block text-sm text-[#3E2723]">Frozen Milk Cubes</span>
+                <span class="text-xs text-[#6D4C41] mt-1 block leading-snug">Balok es susu murni beku yang meleleh lembut menambah sensasi gurih creamy.</span>
+              </div>
+            </button>
+
+            <!-- Pure Tea Cubes -->
+            <button onclick="setIceType('tea')" class="ice-btn border-2 border-[#E6DFD5] p-4 rounded-2xl text-left transition hover:border-[#C88A4B] flex flex-col justify-between" data-ice="tea">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-[10px] font-extrabold uppercase tracking-wider text-amber-900 bg-amber-100/70 px-2.5 py-0.5 rounded-full">Tea Bold</span>
+                  <span class="text-xs font-extrabold text-[#C88A4B]">+Rp 1.000</span>
+                </div>
+                <span class="font-extrabold block text-sm text-[#3E2723]">Pure Tea Cubes</span>
+                <span class="text-xs text-[#6D4C41] mt-1 block leading-snug">Balok es seduhan teh pekat untuk mengunci wangi teh agar tidak mudah pudar.</span>
+              </div>
+            </button>
+
+            <!-- Regular Water Ice -->
+            <button onclick="setIceType('water')" class="ice-btn border-2 border-[#E6DFD5] p-4 rounded-2xl text-left transition hover:border-rose-400 flex flex-col justify-between" data-ice="water">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-[10px] font-extrabold uppercase tracking-wider text-stone-600 bg-stone-100 px-2.5 py-0.5 rounded-full">Standard</span>
+                  <span class="text-xs font-extrabold text-stone-500">Rp 0</span>
+                </div>
+                <span class="font-extrabold block text-sm text-[#3E2723]">Es Batu Biasa</span>
+                <span class="text-xs text-[#6D4C41] mt-1 block leading-snug">Es batu kristal biasa. Geser slider waktu ke 60m untuk melihat efek encernya.</span>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 5: Quantity & Catatan Tambahan -->
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-[#E6DFD5]">
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
+            <div class="sm:col-span-5">
+              <label class="block text-xs font-extrabold text-[#3E2723] mb-2">Jumlah Gelas (Qty)</label>
+              <div class="flex items-center justify-between bg-[#FAF7F2] border border-[#E6DFD5] rounded-2xl p-1.5">
+                <button onclick="updateBuilderQty(-1)" class="w-9 h-9 rounded-xl bg-white hover:bg-[#F3E8D8] text-[#3E2723] font-extrabold text-base shadow-xs transition active:scale-90">−</button>
+                <span id="builder-qty" class="font-extrabold text-base text-[#3E2723] px-4">1</span>
+                <button onclick="updateBuilderQty(1)" class="w-9 h-9 rounded-xl bg-[#3E2723] hover:bg-[#5D4037] text-[#FAF7F2] font-extrabold text-base shadow-xs transition active:scale-90">+</button>
+              </div>
+            </div>
+            <div class="sm:col-span-7">
+              <label for="builder-note" class="block text-xs font-extrabold text-[#3E2723] mb-2">Catatan Tambahan (Opsional)</label>
+              <input type="text" id="builder-note" placeholder="" 
+                class="w-full bg-[#FAF7F2] border border-[#E6DFD5] focus:border-[#C88A4B] focus:outline-none rounded-2xl px-4 py-2.5 text-xs text-[#3E2723]">
+            </div>
+          </div>
+        </div>
+
+        <!-- DESKTOP ORDER SUMMARY & DIRECT CHECKOUT BAR -->
+        <div class="bg-[#3E2723] text-[#FAF7F2] p-6 rounded-3xl flex flex-col sm:flex-row justify-between items-center gap-4 shadow-xl">
+          <div class="w-full sm:w-auto">
+            <span class="text-[11px] text-[#D7CCC8] block mb-0.5">Subtotal Racikan Saat Ini:</span>
+            <div class="flex items-baseline gap-2.5">
+              <span id="live-price-display" class="text-2xl sm:text-3xl font-extrabold font-brand text-[#F3C68F]">Rp 20.000</span>
+              <span id="live-unit-detail" class="text-xs text-[#BCAAA4]">(1 cup)</span>
+            </div>
+            <span id="summary-badge" class="text-[11px] text-[#EFEBE9] block mt-1 font-medium">
+              Signature Jasmine Tea • Fresh Milk • Half Sweet (50%) • Hybrid Cubes
+            </span>
+          </div>
+
+          <div class="flex flex-col sm:flex-row w-full sm:w-auto gap-2.5">
+            <button onclick="addToCart(false)" class="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-[#FAF7F2] border border-white/20 font-bold px-4 py-3.5 rounded-2xl transition text-xs flex items-center justify-center gap-1.5">
+              <span>+ Keranjang</span>
+            </button>
+            <button onclick="proceedToPayment()" class="w-full sm:w-auto bg-[#C88A4B] hover:bg-[#D4985B] text-[#281815] font-extrabold px-6 py-3.5 rounded-2xl transition active:scale-95 shadow-lg flex items-center justify-center gap-2 text-xs sm:text-sm">
+              <span>Lanjut ke Pembayaran</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- MOBILE STICKY BOTTOM BAR -->
+  <div class="fixed bottom-0 left-0 right-0 z-30 lg:hidden bg-[#3E2723] text-[#FAF7F2] px-4 py-3 border-t border-white/10 shadow-2xl flex items-center justify-between gap-3">
+    <div>
+      <span class="text-[10px] text-[#D7CCC8] block">Total Harga:</span>
+      <span id="mobile-price-display" class="text-lg font-extrabold font-brand text-[#F3C68F]">Rp 20.000</span>
+    </div>
+    <button onclick="proceedToPayment()" class="bg-[#C88A4B] hover:bg-[#D4985B] text-[#281815] font-extrabold px-5 py-2.5 rounded-xl text-xs flex items-center gap-1.5 shadow-md active:scale-95">
+      <span>Lanjut ke Pembayaran</span>
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path>
+      </svg>
+    </button>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- CHECKOUT & INTERACTIVE PAYMENT DRAWER / MODAL                         -->
+  <!-- ===================================================================== -->
+  <div id="checkout-drawer" class="fixed inset-0 z-50 bg-[#281815]/70 backdrop-blur-xs hidden flex justify-end transition-opacity">
+    <div class="bg-[#FAF7F2] w-full max-w-lg h-full overflow-y-auto shadow-2xl border-l border-[#E6DFD5] flex flex-col justify-between">
+      
+      <!-- Drawer Header -->
+      <div class="sticky top-0 z-20 bg-white border-b border-[#E6DFD5] px-6 py-4 flex items-center justify-between">
+        <div>
+          <span class="text-[10px] font-extrabold uppercase tracking-widest text-[#C88A4B]">Meltéa Express Checkout</span>
+          <h3 id="drawer-title" class="text-lg font-extrabold text-[#3E2723]">Ringkasan & Pembayaran</h3>
+        </div>
+        <button onclick="closeCheckoutDrawer()" class="w-9 h-9 rounded-full bg-[#FAF7F2] hover:bg-[#F3E8D8] text-[#3E2723] flex items-center justify-center font-bold text-sm transition">
+          ✕
+        </button>
+      </div>
+
+      <!-- STEP A: CART, CUSTOMER DETAILS & PAYMENT METHOD -->
+      <div id="checkout-step-form" class="p-6 space-y-6 flex-1">
+        
+        <!-- Itemized Cart List -->
+        <div class="bg-white p-4 rounded-2xl border border-[#E6DFD5]">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-extrabold text-[#3E2723]">Pesanan Kamu (<span id="cart-count-label">1</span> Item)</span>
+            <button onclick="closeCheckoutDrawer()" class="text-[11px] font-bold text-[#C88A4B] hover:underline">+ Racik Gelas Lain</button>
+          </div>
+          <div id="cart-items-container" class="space-y-3 divide-y divide-[#F3ECE1]">
+            <!-- Cart items rendered dynamically -->
+          </div>
+        </div>
+
+        <!-- Customer Details -->
+        <div class="bg-white p-4 rounded-2xl border border-[#E6DFD5] space-y-3.5">
+          <h4 class="text-xs font-extrabold text-[#3E2723] uppercase tracking-wider">Data Pemesan</h4>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[11px] font-bold text-[#6D4C41] mb-1">Nama Pemesan *</label>
+              <input type="text" id="cust-name" placeholder="Nama kamu..." class="w-full bg-[#FAF7F2] border border-[#E6DFD5] focus:border-[#C88A4B] focus:outline-none rounded-xl px-3.5 py-2 text-xs text-[#3E2723]">
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-[#6D4C41] mb-1">Nomor WhatsApp *</label>
+              <input type="tel" id="cust-wa" placeholder="0812xxxxxxxx" class="w-full bg-[#FAF7F2] border border-[#E6DFD5] focus:border-[#C88A4B] focus:outline-none rounded-xl px-3.5 py-2 text-xs text-[#3E2723]">
+            </div>
+          </div>
+
+          <div class="bg-[#FAF7F2] border border-[#E6DFD5] px-3.5 py-2.5 rounded-xl flex items-center justify-between text-xs">
+            <span class="text-[#6D4C41] font-bold">Metode Pengambilan</span>
+            <span class="font-extrabold text-[#3E2723] flex items-center gap-1.5">
+              <span>🏪 Pick-up di Outlet</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Clean Payment Method Selector (Only QRIS & Cash - No Duplicate Cards) -->
+        <div class="bg-white p-4 rounded-2xl border border-[#E6DFD5] space-y-3">
+          <h4 class="text-xs font-extrabold text-[#3E2723] uppercase tracking-wider">Pilih Metode Pembayaran</h4>
+
+          <!-- Method 1: QRIS Statis Instan -->
+          <div onclick="selectPaymentMethod('qris')" id="pay-card-qris" class="pay-method-card border-2 border-[#3E2723] bg-[#FAF7F2] p-3.5 rounded-2xl cursor-pointer transition">
+            <div class="flex items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 shrink-0 rounded-xl bg-[#3E2723] text-white font-extrabold text-[10px] flex items-center justify-center tracking-tighter">QRIS</div>
+                <div>
+                  <span class="text-xs font-extrabold text-[#3E2723] block">QRIS Instan (Scan & Bayar)</span>
+                  <span class="text-[10px] text-[#6D4C41] block">GoPay, ShopeePay, DANA, OVO, BCA Mobile, Jago, dll.</span>
+                </div>
+              </div>
+              <span class="w-4 h-4 shrink-0 rounded-full border-4 border-[#3E2723] bg-[#C88A4B]" id="radio-qris"></span>
+            </div>
+          </div>
+
+          <!-- Method 2: Bayar Tunai di Outlet -->
+          <div onclick="selectPaymentMethod('cash')" id="pay-card-cash" class="pay-method-card border-2 border-[#E6DFD5] bg-white p-3.5 rounded-2xl cursor-pointer transition">
+            <div class="flex items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 shrink-0 rounded-xl bg-teal-50 text-teal-800 font-extrabold text-sm flex items-center justify-center">💵</div>
+                <div>
+                  <span class="text-xs font-extrabold text-[#3E2723] block">Bayar Tunai di Outlet</span>
+                  <span class="text-[10px] text-[#6D4C41] block">Bayar langsung di kasir saat pengambilan minuman</span>
+                </div>
+              </div>
+              <span class="w-4 h-4 shrink-0 rounded-full border-2 border-[#D7CCC8]" id="radio-cash"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order Total & Proceed Button -->
+        <div class="bg-[#3E2723] text-[#FAF7F2] p-4 rounded-2xl space-y-2.5">
+          <div class="flex justify-between text-xs text-[#D7CCC8]">
+            <span>Subtotal Minuman</span>
+            <span id="checkout-subtotal" class="font-bold text-white">Rp 26.000</span>
+          </div>
+          <div class="border-t border-white/15 pt-2.5 flex justify-between items-center">
+            <span class="text-xs font-extrabold">Total Pembayaran</span>
+            <span id="checkout-grand-total" class="text-xl font-extrabold font-brand text-[#F3C68F]">Rp 26.000</span>
+          </div>
+          <button onclick="initiatePaymentGate()" class="w-full bg-[#C88A4B] hover:bg-[#D4985B] text-[#281815] font-extrabold py-3.5 rounded-xl text-xs sm:text-sm transition active:scale-95 shadow-md mt-2">
+            Bayar & Buat Pesanan →
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP B: STATIC QRIS PAYMENT & WHATSAPP PROOF UPLOAD -->
+      <div id="checkout-step-gateway" class="hidden p-6 space-y-5 flex-1">
+        
+        <div class="bg-white p-5 rounded-3xl border border-[#E6DFD5] space-y-4 shadow-xs">
+          <!-- Total Nominal with One-Click Copy -->
+          <div class="bg-[#FAF7F2] p-3.5 rounded-2xl border border-[#E6DFD5] flex items-center justify-between gap-2">
+            <div>
+              <span class="text-[10px] font-bold text-[#6D4C41] uppercase tracking-wider block">Total Tagihan (Masukkan Nominal):</span>
+              <span id="qris-amount-display" class="text-2xl font-extrabold font-brand text-[#3E2723]">Rp 26.000</span>
+            </div>
+            <button onclick="copyNominalAmount()" class="bg-[#3E2723] hover:bg-[#5D4037] text-[#FAF7F2] text-[11px] font-bold px-3.5 py-2 rounded-xl transition active:scale-95 flex items-center gap-1.5 shadow-xs">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+              </svg>
+              <span>Salin Nominal</span>
+            </button>
+          </div>
+          <!-- Official QRIS Card (Place qris-meltea.jpeg in the same folder) -->
+          <div id="gopay-qris-card" class="w-full max-w-[260px] mx-auto rounded-3xl overflow-hidden border-2 border-[#E6DFD5] shadow-md bg-[#FAF7F2] p-5 text-center space-y-3">
+            <!-- Header Label -->
+            <div class="flex items-center justify-between border-b border-[#E6DFD5] pb-2.5">
+              <span class="font-brand font-extrabold text-xs tracking-wider text-[#3E2723] bg-[#F3E8D8] px-2.5 py-1 rounded-lg">QRIS</span>
+              <span class="text-[10px] font-extrabold uppercase tracking-widest text-[#C88A4B]">MELTÉA BREW LAB</span>
+            </div>
+
+            <!-- Custom QR Image Slot -->
+            <div class="relative w-48 h-48 mx-auto bg-white p-2 border border-[#E6DFD5] rounded-2xl shadow-2xs flex items-center justify-center overflow-hidden">
+              <img id="custom-qris-image" src="qris-meltea.jpeg" alt="QRIS MELTEA" class="w-full h-full object-contain rounded-xl"
+                onerror="this.onerror=null; this.src='https://placehold.co/300x300/FAF7F2/3E2723?text=Pasang+qris-meltea.jpeg';">
+            </div>
+
+            <!-- Merchant Identity -->
+            <div class="pt-0.5">
+              <h4 class="font-extrabold text-xs text-[#3E2723] tracking-tight" id="merchant-qris-title">MELTEA, MAKANAN & MINUMAN</h4>
+              <p class="text-[10px] font-semibold text-[#8D6E63]">NMID: ID1026643629128</p>
+            </div>
+          </div>
+
+          <div class="flex justify-center gap-2">
+            <button onclick="downloadQrisCard()" class="text-[11px] font-bold text-[#8D5B2B] bg-[#F3E8D8] hover:bg-[#EAD8BE] px-3.5 py-1.5 rounded-xl transition flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path>
+              </svg>
+              <span>Perbesar Kode QR</span>
+            </button>
+          </div>
+
+          <!-- 3-Step Clear Payment Instructions -->
+          <div class="bg-amber-50/70 border border-amber-200/80 rounded-2xl p-3.5 text-[11px] text-[#5D4037] space-y-1.5">
+            <span class="font-extrabold text-[#3E2723] block">Cara Pembayaran QRIS:</span>
+            <p>1. <b>Scan kode QR</b> di atas lewat aplikasi e-Wallet atau Mobile Banking.</p>
+            <p>2. <b>Ketik nominal pembayaran</b> persis sesuai total tagihan di atas & simpan screenshot berhasil.</p>
+            <p>3. <b>Klik tombol WhatsApp di bawah</b> lalu lampirkan foto bukti transfer di chat WhatsApp.</p>
+          </div>
+
+          <!-- Primary Send Proof & Auto Message to WhatsApp Button -->
+          <button onclick="confirmPaymentAndOpenWhatsApp()" class="w-full bg-[#25D366] hover:bg-[#20BD5A] text-white font-extrabold py-4 rounded-2xl text-xs sm:text-sm shadow-lg transition active:scale-95 flex items-center justify-center gap-2">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824z"/>
+            </svg>
+            <span>Kirim Bukti Pembayaran via WhatsApp</span>
+          </button>
+        </div>
+
+        <button onclick="backToCheckoutForm()" class="w-full text-xs font-bold text-[#6D4C41] hover:text-[#3E2723] py-1">
+          ← Kembali ke Data Pemesan
+        </button>
+      </div>
+
+      <!-- STEP C: PAYMENT CONFIRMATION & DIGITAL RECEIPT (STRUK DIGITAL) -->
+      <div id="checkout-step-receipt" class="hidden p-6 space-y-5 flex-1">
+        <div id="receipt-print-area" class="bg-white p-6 rounded-3xl border border-[#E6DFD5] shadow-sm space-y-4">
+          
+          <!-- Animated Checkmark Header -->
+          <div class="text-center border-b border-dashed border-[#D7CCC8] pb-5">
+            <div class="w-14 h-14 bg-teal-50 text-teal-700 border-2 border-teal-200 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl font-extrabold animate-bounce">
+              ✓
+            </div>
+            <span class="text-[10px] font-extrabold uppercase tracking-widest text-teal-700 bg-teal-50 px-3 py-0.5 rounded-full">Pembayaran Dikonfirmasi</span>
+            <h4 class="text-xl font-extrabold font-brand text-[#3E2723] mt-2">Pesanan Masuk ke Brew Lab!</h4>
+            <p class="text-xs text-[#6D4C41] mt-1">Estimasi waktu racik barista: <b class="text-[#3E2723]">5 – 8 Menit</b></p>
+          </div>
+
+          <!-- Order Metadata -->
+          <div class="grid grid-cols-2 gap-2 text-xs bg-[#FAF7F2] p-3.5 rounded-2xl border border-[#E6DFD5]">
+            <div>
+              <span class="text-[10px] text-[#8D6E63] block">Order ID</span>
+              <strong id="receipt-order-id" class="font-mono text-[#3E2723]">#MLT-2026-884</strong>
+            </div>
+            <div class="text-right">
+              <span class="text-[10px] text-[#8D6E63] block">Metode Bayar</span>
+              <strong id="receipt-pay-method" class="text-[#3E2723]">QRIS Instant</strong>
+            </div>
+            <div>
+              <span class="text-[10px] text-[#8D6E63] block">Pemesan</span>
+              <strong id="receipt-cust-name" class="text-[#3E2723]">-</strong>
+            </div>
+            <div class="text-right">
+              <span class="text-[10px] text-[#8D6E63] block">Pengambilan</span>
+              <strong id="receipt-order-type" class="text-[#3E2723]">Pick-up Outlet</strong>
+            </div>
+          </div>
+
+          <!-- Itemized Digital Receipt -->
+          <div class="space-y-2">
+            <span class="text-[11px] font-extrabold text-[#3E2723] uppercase tracking-wider block">Detail Minuman</span>
+            <div id="receipt-items-list" class="space-y-2 text-xs border-b border-dashed border-[#D7CCC8] pb-3">
+              <!-- Populated via JS -->
+            </div>
+            <div class="flex justify-between items-center pt-1">
+              <span class="font-extrabold text-sm text-[#3E2723]">Total Lunas</span>
+              <span id="receipt-total-paid" class="font-brand font-extrabold text-lg text-teal-800">Rp 26.000</span>
+            </div>
+          </div>
+
+          <p class="text-[10px] text-center text-[#8D6E63] pt-2">
+            MELTÉA — Artisan Brew Lab • Never-Watered Milk Tea
+          </p>
+        </div>
+
+        <!-- Receipt Actions -->
+        <div class="grid grid-cols-2 gap-2.5">
+          <button onclick="launchWhatsAppIntent()" class="bg-[#25D366] hover:bg-[#20BD5A] text-white font-extrabold py-3.5 px-4 rounded-2xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition active:scale-95">
+            <span>Buka Chat WA</span>
+          </button>
+          <button onclick="copyReceiptToWhatsApp()" class="bg-white hover:bg-[#F3E8D8] text-[#3E2723] border border-[#E6DFD5] font-extrabold py-3.5 px-4 rounded-2xl text-xs flex items-center justify-center gap-1.5 transition">
+            <span>Salin Teks Struk</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2.5">
+          <button onclick="window.print()" class="bg-white hover:bg-[#F3E8D8] text-[#3E2723] border border-[#E6DFD5] font-bold py-3 rounded-2xl text-xs transition">
+            Cetak Struk
+          </button>
+          <button onclick="resetAndNewOrder()" class="bg-[#3E2723] text-[#FAF7F2] font-bold py-3 rounded-2xl text-xs hover:bg-[#5D4037] transition">
+            Pesanan Baru
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MERCHANT SETTINGS MODAL (OWNER QRIS & WHATSAPP CONFIG)                -->
+  <!-- ===================================================================== -->
+  <div id="merchant-modal" class="fixed inset-0 z-50 bg-[#281815]/70 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-3xl border border-[#E6DFD5] p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-[#F3ECE1] pb-3">
+        <div>
+          <span class="text-[10px] font-extrabold uppercase tracking-widest text-[#C88A4B]">Owner Quick Setup</span>
+          <h3 class="text-base font-extrabold text-[#3E2723]">Pengaturan QRIS Statis & WhatsApp</h3>
+        </div>
+        <button onclick="closeMerchantModal()" class="w-8 h-8 rounded-full bg-[#FAF7F2] text-[#3E2723] font-bold text-xs">✕</button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-[#3E2723] mb-1">Nomor WhatsApp Penerima Order (Format 628...)</label>
+          <input type="text" id="merchant-wa-input" value="6281234567890" placeholder="62812xxxxxxxx" class="w-full bg-[#FAF7F2] border border-[#E6DFD5] rounded-xl px-3.5 py-2.5 text-[#3E2723] font-mono">
+        </div>
+
+        <div>
+          <label class="block font-bold text-[#3E2723] mb-1">Nama Merchant QRIS</label>
+          <input type="text" id="merchant-name-input" value="MELTÉA ARTISAN BREW" class="w-full bg-[#FAF7F2] border border-[#E6DFD5] rounded-xl px-3.5 py-2.5 text-[#3E2723]">
+        </div>
+
+        <div>
+          <label class="block font-bold text-[#3E2723] mb-1">Ganti Gambar QRIS Asli (GoPay / BCA / DANA Merchant)</label>
+          <input type="file" id="merchant-qris-file" accept="image/*" onchange="handleMerchantQrisUpload(event)" class="w-full text-[11px] text-[#6D4C41] file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#F3E8D8] file:text-[#3E2723] hover:file:bg-[#EAD8BE]">
+          <p class="text-[10px] text-[#8D6E63] mt-1">Jika dikosongkan, sistem menggunakan kartu QRIS bawaan Meltéa.</p>
+        </div>
+      </div>
+
+      <button onclick="saveMerchantSettings()" class="w-full bg-[#3E2723] hover:bg-[#5D4037] text-[#FAF7F2] font-extrabold py-3 rounded-2xl text-xs transition">
+        Simpan Pengaturan Toko
+      </button>
+    </div>
+  </div>
+
+  <!-- QRIS ENLARGE MODAL -->
+  <div id="qris-zoom-modal" onclick="closeQrisZoom()" class="fixed inset-0 z-[60] bg-black/85 backdrop-blur-xs hidden flex flex-col items-center justify-center p-4">
+    <div onclick="event.stopPropagation()" class="bg-[#FAF7F2] p-5 sm:p-6 rounded-3xl max-w-md w-full text-center space-y-4 shadow-2xl border-2 border-[#E6DFD5]">
+      <div class="flex items-center justify-between border-b border-[#E6DFD5] pb-2.5">
+        <span class="font-brand font-extrabold text-xs tracking-wider text-[#3E2723] bg-[#F3E8D8] px-3 py-1 rounded-lg">QRIS</span>
+        <span class="text-[11px] font-extrabold uppercase tracking-widest text-[#C88A4B]">MELTÉA BREW LAB</span>
+      </div>
+
+      <div id="zoom-qris-container" class="w-full flex items-center justify-center">
+        <div class="w-72 h-72 sm:w-80 sm:h-80 bg-white p-3 rounded-2xl border border-[#E6DFD5] shadow-sm flex items-center justify-center overflow-hidden">
+          <img id="zoom-qris-img" src="qris-meltea.jpeg" alt="QRIS MELTEA Besar" class="w-full h-full object-contain rounded-xl"
+            onerror="this.onerror=null; this.src='https://placehold.co/400x400/FAF7F2/3E2723?text=Pasang+qris-meltea.jpeg';">
+        </div>
+      </div>
+
+      <div>
+        <h4 class="font-extrabold text-sm text-[#3E2723]" id="zoom-qris-merchant">MELTEA, MAKANAN & MINUMAN</h4>
+        <p class="text-[11px] font-semibold text-[#8D6E63]">NMID: ID1026643629128</p>
+        <p class="text-lg font-extrabold font-brand text-[#3E2723] mt-1.5" id="zoom-qris-nominal">Rp 26.000</p>
+      </div>
+
+      <button onclick="closeQrisZoom()" class="w-full bg-[#3E2723] hover:bg-[#5D4037] text-[#FAF7F2] text-xs font-extrabold py-3.5 rounded-2xl transition active:scale-95">
+        Tutup Tampilan Besar
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // MELTÉA ARTISAN BREW LAB — APPLICATION STATE & CATALOG
+    // =========================================================================
+    let currentTeaBase = 'jasmine';
+    let currentMilkBase = 'fresh';
+    let currentSugar = 50;
+    let currentIce = 'hybrid';
+    let builderQty = 1;
+    let selectedPayment = 'qris';
+    let cart = [];
+    let currentOrderId = '';
+    let lastReceiptText = '';
+
+    const merchantConfig = {
+      whatsapp: '6281212128329',
+      merchantName: 'MELTEA, MAKANAN & MINUMAN',
+      qrisSrc: 'qris-meltea.jpeg',
+      googleSheetWebhookUrl: 'https://script.google.com/macros/s/AKfycbwkkOsRCBFmUXTwbEx64okWIH9g52cch5yJXd_KVl0JGReS3SJTnsJfVLPHV7loNJhX/exec'
+    };
+
+    const teaCatalog = {
+      jasmine: {
+        name: 'Signature Jasmine Tea',
+        basePrice: 20000,
+        teaColor: '#C88A4B',
+        osmanthusSugarGrams: 0
+      },
+      osmanthus: {
+        name: 'Golden Osmanthus Tea',
+        basePrice: 23000,
+        teaColor: '#D49A4A',
+        osmanthusSugarGrams: 9
+      }
+    };
+
+    const milkCatalog = {
+      fresh: {
+        name: 'Signature Fresh Milk',
+        extraPrice: 0,
+        naturalSugarGrams: 5.5
+      },
+      oatside: {
+        name: 'Oatside Oat Milk',
+        extraPrice: 3000,
+        naturalSugarGrams: 4.5
+      }
+    };
+
+    const sugarCatalog = {
+      0:   { label: 'No Sugar (0%)',      syrupSugarGrams: 0 },
+      25:  { label: 'Quarter Sweet (25%)', syrupSugarGrams: 5.5 },
+      50:  { label: 'Half Sweet (50%)',    syrupSugarGrams: 11 },
+      70:  { label: 'Less Sweet (70%)',    syrupSugarGrams: 15 },
+      100: { label: 'Normal Sweet (100%)', syrupSugarGrams: 22.5 }
+    };
+
+    const iceCatalog = {
+      hybrid: {
+        name: 'Hybrid Cubes',
+        extraPrice: 0,
+        milkCubeSugarGrams: 2.5,
+        teaRetention: 88,
+        creaminess: 78
+      },
+      milk: {
+        name: 'Frozen Milk Cubes',
+        extraPrice: 2000,
+        milkCubeSugarGrams: 4.5,
+        teaRetention: 78,
+        creaminess: 92
+      },
+      tea: {
+        name: 'Pure Tea Cubes',
+        extraPrice: 1000,
+        milkCubeSugarGrams: 0,
+        teaRetention: 95,
+        creaminess: 68
+      },
+      water: {
+        name: 'Es Batu Biasa',
+        extraPrice: 0,
+        milkCubeSugarGrams: 0,
+        teaRetention: 55,
+        creaminess: 50
+      }
+    };
+
+    function formatRupiah(amount) {
+      return 'Rp ' + Number(amount).toLocaleString('id-ID');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast-notification');
+      const toastMsg = document.getElementById('toast-message');
+      if (!toast || !toastMsg) return;
+      toastMsg.innerText = msg;
+      toast.classList.remove('translate-x-[150%]');
+      setTimeout(() => {
+        toast.classList.add('translate-x-[150%]');
+      }, 2800);
+    }
+
+    function getUnitPrice() {
+      const tea = teaCatalog[currentTeaBase];
+      const milk = milkCatalog[currentMilkBase];
+      const ice = iceCatalog[currentIce];
+      return tea.basePrice + milk.extraPrice + ice.extraPrice;
+    }
+
+    function calculateTotalSugarGrams() {
+      const tea = teaCatalog[currentTeaBase];
+      const milk = milkCatalog[currentMilkBase];
+      const sugar = sugarCatalog[currentSugar];
+      const ice = iceCatalog[currentIce];
+      const total = tea.osmanthusSugarGrams + milk.naturalSugarGrams + sugar.syrupSugarGrams + ice.milkCubeSugarGrams;
+      return Math.round(total * 10) / 10;
+    }
+
+    // =========================================================================
+    // CUSTOMIZER CONTROLS
+    // =========================================================================
+    function setTeaBase(teaKey) {
+      currentTeaBase = teaKey;
+      document.querySelectorAll('.tea-btn').forEach(btn => {
+        const active = btn.dataset.tea === teaKey;
+        btn.classList.toggle('border-[#3E2723]', active);
+        btn.classList.toggle('bg-[#FAF7F2]', active);
+        btn.classList.toggle('border-[#E6DFD5]', !active);
+      });
+      updateSimulation();
+    }
+
+    function setMilkBase(milkKey) {
+      currentMilkBase = milkKey;
+      document.querySelectorAll('.milk-btn').forEach(btn => {
+        const active = btn.dataset.milk === milkKey;
+        btn.classList.toggle('border-[#3E2723]', active);
+        btn.classList.toggle('bg-[#FAF7F2]', active);
+        btn.classList.toggle('border-[#E6DFD5]', !active);
+      });
+      updateSimulation();
+    }
+
+    function setSugarLevel(level) {
+      currentSugar = level;
+      document.querySelectorAll('.sugar-btn').forEach(btn => {
+        const active = Number(btn.dataset.sugar) === level;
+        btn.classList.toggle('border-[#3E2723]', active);
+        btn.classList.toggle('bg-[#FAF7F2]', active);
+        btn.classList.toggle('border-[#E6DFD5]', !active);
+      });
+      updateSimulation();
+    }
+
+    function setIceType(iceKey) {
+      currentIce = iceKey;
+      document.querySelectorAll('.ice-btn').forEach(btn => {
+        const active = btn.dataset.ice === iceKey;
+        btn.classList.toggle('border-[#3E2723]', active);
+        btn.classList.toggle('bg-[#FAF7F2]', active);
+        btn.classList.toggle('border-[#E6DFD5]', !active);
+      });
+      updateSimulation();
+    }
+
+    function updateBuilderQty(delta) {
+      builderQty = Math.max(1, Math.min(50, builderQty + delta));
+      document.getElementById('builder-qty').innerText = builderQty;
+      updateSimulation();
+    }
+
+    // =========================================================================
+    // LIVE VISUALIZER & SUGAR METER UPDATER
+    // =========================================================================
+    function renderFloatingCubes(meltMinutes) {
+      const container = document.getElementById('cube-container');
+      if (!container) return;
+
+      const scale = Math.max(0.32, 1 - (meltMinutes / 60) * 0.62);
+      const opacity = Math.max(0.28, 1 - (meltMinutes / 60) * 0.68);
+
+      let cubeConfigs = [];
+      if (currentIce === 'hybrid') {
+        cubeConfigs = [
+          { bg: 'bg-[#8D5B2B]/85 border-amber-200/70', pos: 'top-1 left-4', anim: 'ice-bobbing-1' },
+          { bg: 'bg-white/90 border-white', pos: 'top-3 right-4', anim: 'ice-bobbing-2' },
+          { bg: 'bg-sky-100/70 border-white/80', pos: 'top-12 left-10', anim: 'ice-bobbing-3' },
+          { bg: 'bg-sky-100/65 border-white/80', pos: 'top-14 right-7', anim: 'ice-bobbing-1' }
+        ];
+      } else if (currentIce === 'milk') {
+        cubeConfigs = [
+          { bg: 'bg-white/95 border-amber-100', pos: 'top-1 left-4', anim: 'ice-bobbing-1' },
+          { bg: 'bg-[#FFFDF9]/90 border-white', pos: 'top-3 right-4', anim: 'ice-bobbing-2' },
+          { bg: 'bg-sky-100/70 border-white/80', pos: 'top-12 left-9', anim: 'ice-bobbing-3' },
+          { bg: 'bg-sky-100/65 border-white/80', pos: 'top-14 right-8', anim: 'ice-bobbing-1' }
+        ];
+      } else if (currentIce === 'tea') {
+        cubeConfigs = [
+          { bg: 'bg-[#6F4322]/90 border-amber-300/60', pos: 'top-1 left-4', anim: 'ice-bobbing-1' },
+          { bg: 'bg-[#8D5B2B]/85 border-amber-200/60', pos: 'top-3 right-4', anim: 'ice-bobbing-2' },
+          { bg: 'bg-sky-100/70 border-white/80', pos: 'top-12 left-9', anim: 'ice-bobbing-3' },
+          { bg: 'bg-sky-100/65 border-white/80', pos: 'top-14 right-8', anim: 'ice-bobbing-1' }
+        ];
+      } else {
+        cubeConfigs = [
+          { bg: 'bg-sky-100/75 border-white/90', pos: 'top-1 left-4', anim: 'ice-bobbing-1' },
+          { bg: 'bg-white/60 border-white/90', pos: 'top-3 right-4', anim: 'ice-bobbing-2' },
+          { bg: 'bg-sky-100/65 border-white/90', pos: 'top-12 left-9', anim: 'ice-bobbing-3' },
+          { bg: 'bg-white/55 border-white/90', pos: 'top-14 right-8', anim: 'ice-bobbing-1' }
+        ];
+      }
+
+      container.innerHTML = cubeConfigs.map(c => `
+        <div class="absolute ${c.pos} w-11 h-11 rounded-xl border ${c.bg} shadow-sm backdrop-blur-xs ${c.anim} transition-brew"
+             style="transform: scale(${scale}); opacity: ${opacity};">
+          <div class="w-3 h-1.5 bg-white/70 rounded-full m-1.5"></div>
+        </div>
+      `).join('');
+    }
+
+    function updateSimulation() {
+      const meltSlider = document.getElementById('melt-slider');
+      const meltMinutes = meltSlider ? Number(meltSlider.value) : 0;
+
+      const tea = teaCatalog[currentTeaBase];
+      const milk = milkCatalog[currentMilkBase];
+      const sugar = sugarCatalog[currentSugar];
+      const ice = iceCatalog[currentIce];
+
+      // Update Melt Time Label & Description
+      const timeLabel = document.getElementById('melt-time-label');
+      const statusDesc = document.getElementById('melt-status-desc');
+      const badgeStatus = document.getElementById('badge-status');
+      const liquidLayer = document.getElementById('liquid-layer');
+
+      if (timeLabel) {
+        timeLabel.innerText = meltMinutes === 0 ? '0 Menit (Fresh)' : `${meltMinutes} Menit`;
+      }
+
+      let teaIntensity = ice.teaRetention;
+      let creamIntensity = ice.creaminess;
+
+      if (currentIce === 'water') {
+        const dilutionFactor = meltMinutes / 60;
+        teaIntensity = Math.round(85 - dilutionFactor * 48);
+        creamIntensity = Math.round(75 - dilutionFactor * 42);
+        if (liquidLayer) {
+          liquidLayer.style.backgroundColor = meltMinutes >= 30 ? '#DFC29E' : tea.teaColor;
+          liquidLayer.style.opacity = String(Math.max(0.68, 1 - dilutionFactor * 0.28));
+        }
+        if (badgeStatus) {
+          badgeStatus.innerText = meltMinutes >= 30 ? 'Mulai Encer' : 'Standard Ice';
+        }
+        if (statusDesc) {
+          statusDesc.innerText = meltMinutes === 0
+            ? 'Es batu kristal biasa baru dituang. Rasa masih pekat di menit-menit awal.'
+            : `Setelah ${meltMinutes} menit, lelehan air tawar mulai menurunkan kepekatan teh dan gurih susu.`;
+        }
+      } else {
+        const boost = Math.round((meltMinutes / 60) * 6);
+        teaIntensity = Math.min(99, ice.teaRetention + (currentIce === 'tea' ? boost : 0));
+        creamIntensity = Math.min(99, ice.creaminess + (currentIce === 'milk' ? boost : 0));
+        if (liquidLayer) {
+          liquidLayer.style.backgroundColor = tea.teaColor;
+          liquidLayer.style.opacity = '1';
+        }
+        if (badgeStatus) {
+          badgeStatus.innerText = 'Never-Watered';
+        }
+        if (statusDesc) {
+          statusDesc.innerText = meltMinutes === 0
+            ? 'Es batu rasa masih beku padat. Komposisi susu dan seduhan teh berpadu sempurna.'
+            : `Setelah ${meltMinutes} menit, balok es melelehkan sari rasa asli sehingga minuman tetap pekat tanpa encer.`;
+        }
+      }
+
+      renderFloatingCubes(meltMinutes);
+
+      // Update Intensity Bars
+      document.getElementById('tea-val-text').innerText = `${teaIntensity}%`;
+      document.getElementById('tea-bar').style.width = `${teaIntensity}%`;
+      document.getElementById('creamy-val-text').innerText = `${creamIntensity}%`;
+      document.getElementById('creamy-bar').style.width = `${creamIntensity}%`;
+
+      // Update Sugar Meter (Desktop + Sticky Mobile)
+      const totalSugar = calculateTotalSugarGrams();
+      const pctDaily = Math.min(100, Math.round((totalSugar / 50) * 100));
+
+      const sugarBar = document.getElementById('sugar-bar');
+      const mobileSugarBar = document.getElementById('mobile-sugar-bar');
+      const sugarBadge = document.getElementById('sugar-level-badge');
+      const mobileSugarBadge = document.getElementById('mobile-sugar-level-badge');
+      const sugarBox = document.getElementById('sugar-warning-box');
+
+      let barColor = 'bg-teal-600';
+      let badgeText = `Total ±${totalSugar}g (${pctDaily}% batas harian)`;
+      let noteText = 'Kadar gula terukur dan ringan, wangi daun teh panggang tetap terasa bersih.';
+
+      if (totalSugar > 28) {
+        barColor = 'bg-amber-500';
+        noteText = 'Rasa manis legit dan bold, cocok untuk penikmat milk tea klasik yang kaya rasa.';
+      } else if (totalSugar >= 15) {
+        barColor = 'bg-emerald-600';
+        noteText = 'Manis seimbang dengan karakter aroma teh dan gurih susu yang harmonis.';
+      }
+
+      if (sugarBar) {
+        sugarBar.className = `h-full transition-brew ${barColor}`;
+        sugarBar.style.width = `${Math.max(8, pctDaily)}%`;
+      }
+      if (mobileSugarBar) {
+        mobileSugarBar.className = `h-full transition-brew ${barColor}`;
+        mobileSugarBar.style.width = `${Math.max(8, pctDaily)}%`;
+      }
+      if (sugarBadge) sugarBadge.innerText = badgeText;
+      if (mobileSugarBadge) mobileSugarBadge.innerText = badgeText;
+      if (sugarBox) sugarBox.innerText = noteText;
+
+      // Update Price Displays
+      const unitPrice = getUnitPrice();
+      const subtotal = unitPrice * builderQty;
+
+      document.getElementById('live-price-display').innerText = formatRupiah(subtotal);
+      document.getElementById('mobile-price-display').innerText = formatRupiah(subtotal);
+      document.getElementById('live-unit-detail').innerText = `(${builderQty} cup)`;
+      document.getElementById('summary-badge').innerText =
+        `${tea.name} • ${milk.name} • ${sugar.label} • ${ice.name}`;
+    }
+
+    // =========================================================================
+    // CART & CHECKOUT WORKFLOW
+    // =========================================================================
+    function addToCart(silent = false) {
+      const tea = teaCatalog[currentTeaBase];
+      const milk = milkCatalog[currentMilkBase];
+      const sugar = sugarCatalog[currentSugar];
+      const ice = iceCatalog[currentIce];
+      const noteInput = document.getElementById('builder-note');
+      const note = noteInput ? noteInput.value.trim() : '';
+      const unitPrice = getUnitPrice();
+
+      const existingIdx = cart.findIndex(item =>
+        item.teaKey === currentTeaBase &&
+        item.milkKey === currentMilkBase &&
+        item.sugarKey === currentSugar &&
+        item.iceKey === currentIce &&
+        item.note === note
+      );
+
+      if (existingIdx > -1) {
+        cart[existingIdx].qty += builderQty;
+      } else {
+        cart.push({
+          id: Date.now() + Math.random(),
+          teaKey: currentTeaBase,
+          milkKey: currentMilkBase,
+          sugarKey: currentSugar,
+          iceKey: currentIce,
+          teaName: tea.name,
+          milkName: milk.name,
+          sugarLabel: sugar.label,
+          iceName: ice.name,
+          unitPrice: unitPrice,
+          qty: builderQty,
+          note: note
+        });
+      }
+
+      updateHeaderCartBadge();
+      if (!silent) {
+        showToast(`${builderQty}x ${tea.name} masuk keranjang!`);
+      }
+    }
+
+    function updateHeaderCartBadge() {
+      const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+      const badge = document.getElementById('header-cart-badge');
+      if (badge) badge.innerText = totalItems;
+    }
+
+    function getGrandTotal() {
+      return cart.reduce((sum, item) => sum + item.unitPrice * item.qty, 0);
+    }
+
+    function proceedToPayment() {
+      if (cart.length === 0) {
+        addToCart(true);
+      }
+      openCheckoutDrawer();
+    }
+
+    function openCheckoutDrawer() {
+      if (cart.length === 0) {
+        addToCart(true);
+      }
+      renderCartItems();
+      document.getElementById('checkout-step-form').classList.remove('hidden');
+      document.getElementById('checkout-step-gateway').classList.add('hidden');
+      document.getElementById('checkout-step-receipt').classList.add('hidden');
+      document.getElementById('drawer-title').innerText = 'Ringkasan & Pembayaran';
+      document.getElementById('checkout-drawer').classList.remove('hidden');
+    }
+
+    function closeCheckoutDrawer() {
+      document.getElementById('checkout-drawer').classList.add('hidden');
+    }
+
+    function renderCartItems() {
+      const container = document.getElementById('cart-items-container');
+      const countLabel = document.getElementById('cart-count-label');
+      const subtotalEl = document.getElementById('checkout-subtotal');
+      const grandTotalEl = document.getElementById('checkout-grand-total');
+
+      const totalQty = cart.reduce((s, i) => s + i.qty, 0);
+      if (countLabel) countLabel.innerText = totalQty;
+
+      container.innerHTML = cart.map((item, idx) => `
+        <div class="pt-2.5 first:pt-0 flex items-start justify-between gap-3">
+          <div class="text-xs">
+            <span class="font-extrabold text-[#3E2723] block">${item.qty}x ${item.teaName}</span>
+            <span class="text-[11px] text-[#6D4C41] block">${item.milkName} • ${item.sugarLabel} • ${item.iceName}</span>
+            ${item.note ? `<span class="text-[10px] italic text-[#8D5B2B] block mt-0.5">Catatan: "${item.note}"</span>` : ''}
+            <span class="text-xs font-extrabold text-[#3E2723] mt-1 block">${formatRupiah(item.unitPrice * item.qty)}</span>
+          </div>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <button onclick="changeCartItemQty(${idx}, -1)" class="w-6 h-6 rounded-lg bg-[#FAF7F2] border border-[#E6DFD5] text-xs font-extrabold text-[#3E2723]">−</button>
+            <span class="text-xs font-bold w-4 text-center">${item.qty}</span>
+            <button onclick="changeCartItemQty(${idx}, 1)" class="w-6 h-6 rounded-lg bg-[#3E2723] text-xs font-extrabold text-white">+</button>
+          </div>
+        </div>
+      `).join('');
+
+      const grand = getGrandTotal();
+      if (subtotalEl) subtotalEl.innerText = formatRupiah(grand);
+      if (grandTotalEl) grandTotalEl.innerText = formatRupiah(grand);
+    }
+
+    function changeCartItemQty(index, delta) {
+      if (!cart[index]) return;
+      cart[index].qty += delta;
+      if (cart[index].qty <= 0) {
+        cart.splice(index, 1);
+      }
+      updateHeaderCartBadge();
+      if (cart.length === 0) {
+        closeCheckoutDrawer();
+        showToast('Keranjang dikosongkan');
+        return;
+      }
+      renderCartItems();
+    }
+
+    function selectPaymentMethod(method) {
+      selectedPayment = method;
+      const qrisCard = document.getElementById('pay-card-qris');
+      const cashCard = document.getElementById('pay-card-cash');
+      const radioQris = document.getElementById('radio-qris');
+      const radioCash = document.getElementById('radio-cash');
+
+      if (method === 'qris') {
+        qrisCard.classList.add('border-[#3E2723]', 'bg-[#FAF7F2]');
+        qrisCard.classList.remove('border-[#E6DFD5]', 'bg-white');
+        cashCard.classList.remove('border-[#3E2723]', 'bg-[#FAF7F2]');
+        cashCard.classList.add('border-[#E6DFD5]', 'bg-white');
+        radioQris.className = 'w-4 h-4 shrink-0 rounded-full border-4 border-[#3E2723] bg-[#C88A4B]';
+        radioCash.className = 'w-4 h-4 shrink-0 rounded-full border-2 border-[#D7CCC8]';
+      } else {
+        cashCard.classList.add('border-[#3E2723]', 'bg-[#FAF7F2]');
+        cashCard.classList.remove('border-[#E6DFD5]', 'bg-white');
+        qrisCard.classList.remove('border-[#3E2723]', 'bg-[#FAF7F2]');
+        qrisCard.classList.add('border-[#E6DFD5]', 'bg-white');
+        radioCash.className = 'w-4 h-4 shrink-0 rounded-full border-4 border-[#3E2723] bg-[#C88A4B]';
+        radioQris.className = 'w-4 h-4 shrink-0 rounded-full border-2 border-[#D7CCC8]';
+      }
+    }
+
+    function buildWhatsAppOrderText(custName, custWa, methodLabel) {
+      const itemsLines = cart.map(item => {
+        const noteStr = item.note ? `\n   _Catatan: ${item.note}_` : '';
+        return `• *${item.qty}x ${item.teaName} (${item.milkName})*\n  _${item.sugarLabel} | ${item.iceName}_ (${formatRupiah(item.unitPrice * item.qty)})${noteStr}`;
+      }).join('\n');
+
+      const footerNote = selectedPayment === 'qris'
+        ? '_(Silakan lampirkan foto bukti transfer QRIS di bawah pesan ini)_'
+        : '_(Pembayaran tunai langsung di outlet saat pengambilan)_';
+
+      return [
+        'Halo Tim *MELTÉA — Artisan Brew Lab!*',
+        'Berikut konfirmasi pesanan saya:',
+        '',
+        `*Order ID:* ${currentOrderId}`,
+        `*Nama Pemesan:* ${custName} (${custWa})`,
+        `*Pengambilan:* Pick-up di Outlet`,
+        `*Metode Bayar:* ${methodLabel}`,
+        '--------------------------------',
+        itemsLines,
+        '--------------------------------',
+        `*TOTAL PEMBAYARAN: ${formatRupiah(getGrandTotal())}*`,
+        footerNote
+      ].join('\n');
+    }
+
+    function initiatePaymentGate() {
+      const nameInput = document.getElementById('cust-name');
+      const waInput = document.getElementById('cust-wa');
+      const custName = nameInput ? nameInput.value.trim() : '';
+      const custWa = waInput ? waInput.value.trim() : '';
+
+      if (!custName) {
+        showToast('Mohon isi nama pemesan terlebih dahulu');
+        if (nameInput) nameInput.focus();
+        return;
+      }
+      if (!custWa) {
+        showToast('Mohon isi nomor WhatsApp aktif kamu');
+        if (waInput) waInput.focus();
+        return;
+      }
+
+      const randNum = Math.floor(100 + Math.random() * 900);
+      currentOrderId = `#MLT-2026-${randNum}`;
+
+      if (selectedPayment === 'qris') {
+        document.getElementById('qris-amount-display').innerText = formatRupiah(getGrandTotal());
+        document.getElementById('checkout-step-form').classList.add('hidden');
+        document.getElementById('checkout-step-gateway').classList.remove('hidden');
+        document.getElementById('drawer-title').innerText = 'Pembayaran QRIS';
+      } else {
+        showReceiptAndSendWA('Bayar Tunai di Outlet');
+      }
+    }
+
+    function backToCheckoutForm() {
+      document.getElementById('checkout-step-gateway').classList.add('hidden');
+      document.getElementById('checkout-step-form').classList.remove('hidden');
+      document.getElementById('drawer-title').innerText = 'Ringkasan & Pembayaran';
+    }
+
+    function copyNominalAmount() {
+      const amount = String(getGrandTotal());
+      const tempInput = document.createElement('input');
+      tempInput.value = amount;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+      showToast(`Nominal ${formatRupiah(amount)} disalin!`);
+    }
+
+    function confirmPaymentAndOpenWhatsApp() {
+      showReceiptAndSendWA('QRIS (Bukti Terlampir)');
+    }
+
+    function showReceiptAndSendWA(methodLabel) {
+      const custName = document.getElementById('cust-name').value.trim();
+      const custWa = document.getElementById('cust-wa').value.trim();
+      const grand = getGrandTotal();
+
+      lastReceiptText = buildWhatsAppOrderText(custName, custWa, methodLabel);
+
+      // Kirim otomatis ke Google Spreadsheet (Non-blocking background sync)
+      sendOrderToGoogleSheets({
+        orderId: currentOrderId,
+        timestamp: new Date().toLocaleString('id-ID'),
+        customerName: custName,
+        customerWa: custWa,
+        paymentMethod: methodLabel,
+        itemsSummary: cart.map(i => `${i.qty}x ${i.teaName} (${i.milkName}, ${i.sugarLabel}, ${i.iceName})${i.note ? ' [Note: ' + i.note + ']' : ''}`).join(' | '),
+        totalQty: cart.reduce((s, i) => s + i.qty, 0),
+        grandTotal: grand
+      });
+
+      document.getElementById('receipt-order-id').innerText = currentOrderId;
+      document.getElementById('receipt-pay-method').innerText = methodLabel;
+      document.getElementById('receipt-cust-name').innerText = `${custName} (${custWa})`;
+      document.getElementById('receipt-total-paid').innerText = formatRupiah(grand);
+
+      const receiptList = document.getElementById('receipt-items-list');
+      receiptList.innerHTML = cart.map(item => `
+        <div class="flex justify-between items-start gap-2">
+          <div>
+            <span class="font-bold text-[#3E2723] block">${item.qty}x ${item.teaName}</span>
+            <span class="text-[10px] text-[#6D4C41] block">${item.milkName} • ${item.sugarLabel} • ${item.iceName}</span>
+          </div>
+          <span class="font-bold text-[#3E2723]">${formatRupiah(item.unitPrice * item.qty)}</span>
+        </div>
+      `).join('');
+
+      document.getElementById('checkout-step-form').classList.add('hidden');
+      document.getElementById('checkout-step-gateway').classList.add('hidden');
+      document.getElementById('checkout-step-receipt').classList.remove('hidden');
+      document.getElementById('drawer-title').innerText = 'Struk Digital Pesanan';
+
+      launchWhatsAppIntent();
+    }
+
+    function launchWhatsAppIntent() {
+      if (!lastReceiptText) return;
+      const encoded = encodeURIComponent(lastReceiptText);
+      const waUrl = `https://wa.me/${merchantConfig.whatsapp}?text=${encoded}`;
+      window.open(waUrl, '_blank');
+    }
+
+    async function sendOrderToGoogleSheets(orderPayload) {
+      const webhookUrl = merchantConfig.googleSheetWebhookUrl;
+      if (!webhookUrl || webhookUrl.includes('PASTE_URL_WEB_APP')) {
+        return;
+      }
+      try {
+        await fetch(webhookUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'text/plain;charset=utf-8'
+          },
+          body: JSON.stringify(orderPayload)
+        });
+      } catch (err) {
+        console.warn('Sync spreadsheet tertunda:', err);
+      }
+    }
+
+    function copyReceiptToWhatsApp() {
+      if (!lastReceiptText) return;
+      const tempArea = document.createElement('textarea');
+      tempArea.value = lastReceiptText;
+      document.body.appendChild(tempArea);
+      tempArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempArea);
+      showToast('Teks struk berhasil disalin!');
+    }
+
+    function resetAndNewOrder() {
+      cart = [];
+      builderQty = 1;
+      const qtyEl = document.getElementById('builder-qty');
+      if (qtyEl) qtyEl.innerText = '1';
+      const noteEl = document.getElementById('builder-note');
+      if (noteEl) noteEl.value = '';
+      updateHeaderCartBadge();
+      updateSimulation();
+      closeCheckoutDrawer();
+      showToast('Siap meracik pesanan baru!');
+    }
+
+    // =========================================================================
+    // QRIS ENLARGE MODAL & MERCHANT SETTINGS HANDLERS
+    // =========================================================================
+    function downloadQrisCard() {
+      const zoomModal = document.getElementById('qris-zoom-modal');
+      const mainImg = document.getElementById('custom-qris-image');
+      const zoomImg = document.getElementById('zoom-qris-img');
+
+      document.getElementById('zoom-qris-nominal').innerText = formatRupiah(getGrandTotal());
+      document.getElementById('zoom-qris-merchant').innerText = merchantConfig.merchantName;
+      if (mainImg && zoomImg) {
+        zoomImg.src = mainImg.src;
+      }
+      zoomModal.classList.remove('hidden');
+    }
+
+    function closeQrisZoom() {
+      document.getElementById('qris-zoom-modal').classList.add('hidden');
+    }
+
+    function closeMerchantModal() {
+      document.getElementById('merchant-modal').classList.add('hidden');
+    }
+
+    function handleMerchantQrisUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        merchantConfig.qrisSrc = e.target.result;
+        const mainImg = document.getElementById('custom-qris-image');
+        if (mainImg) mainImg.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function saveMerchantSettings() {
+      const waVal = document.getElementById('merchant-wa-input').value.trim();
+      const nameVal = document.getElementById('merchant-name-input').value.trim();
+      if (waVal) merchantConfig.whatsapp = waVal;
+      if (nameVal) {
+        merchantConfig.merchantName = nameVal;
+        const titleEl = document.getElementById('merchant-qris-title');
+        if (titleEl) titleEl.innerText = nameVal;
+      }
+      closeMerchantModal();
+      showToast('Pengaturan toko disimpan');
+    }
+
+    // =========================================================================
+    // INITIALIZATION ON WINDOW LOAD
+    // =========================================================================
+    window.addEventListener('DOMContentLoaded', () => {
+      const meltSlider = document.getElementById('melt-slider');
+      if (meltSlider) {
+        meltSlider.addEventListener('input', updateSimulation);
+      }
+      updateSimulation();
+    });
+  </script>
+</body>
+</html>
