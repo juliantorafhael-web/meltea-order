@@ -408,9 +408,9 @@
               <span class="text-[11px] text-[#6D4C41] block leading-tight mt-1">Manis tipis, wangi teh dominan</span>
             </button>
 
-            <!-- Half Sweet (Default Recommended) -->
-            <button onclick="setSugarLevel(50)" class="sugar-btn p-3 rounded-2xl border-2 border-[#3E2723] bg-[#FAF7F2] text-left transition hover:border-[#C88A4B]" data-sugar="50">
-              <span class="text-[10px] font-extrabold uppercase text-[#8D5B2B] bg-[#F3E8D8] px-1.5 py-0.5 rounded">50% Pas</span>
+            <!-- Half Sweet -->
+            <button onclick="setSugarLevel(50)" class="sugar-btn p-3 rounded-2xl border-2 border-[#E6DFD5] text-left transition hover:border-[#C88A4B]" data-sugar="50">
+              <span class="text-[10px] font-extrabold uppercase text-[#8D5B2B] bg-[#F3E8D8] px-1.5 py-0.5 rounded">50%</span>
               <span class="text-sm font-extrabold block text-[#3E2723] mt-1.5">Half Sweet</span>
               <span class="text-[11px] text-[#6D4C41] block leading-tight mt-1">Seimbang antara teh & susu</span>
             </button>
@@ -422,8 +422,8 @@
               <span class="text-[11px] text-[#6D4C41] block leading-tight mt-1">Manis ringan menyegarkan</span>
             </button>
 
-            <!-- Normal Sweet -->
-            <button onclick="setSugarLevel(100)" class="sugar-btn p-3 rounded-2xl border-2 border-[#E6DFD5] text-left transition hover:border-[#C88A4B]" data-sugar="100">
+            <!-- Normal Sweet (Default Active 100%) -->
+            <button onclick="setSugarLevel(100)" class="sugar-btn p-3 rounded-2xl border-2 border-[#3E2723] bg-[#FAF7F2] text-left transition hover:border-[#C88A4B]" data-sugar="100">
               <span class="text-[10px] font-extrabold uppercase text-rose-800 bg-rose-50 px-1.5 py-0.5 rounded">100%</span>
               <span class="text-sm font-extrabold block text-[#3E2723] mt-1.5">Normal Sweet</span>
               <span class="text-[11px] text-[#6D4C41] block leading-tight mt-1">Takaran standar</span>
@@ -518,7 +518,7 @@
               <span id="live-unit-detail" class="text-xs text-[#BCAAA4]">(1 cup)</span>
             </div>
             <span id="summary-badge" class="text-[11px] text-[#EFEBE9] block mt-1 font-medium">
-              Signature Jasmine Tea • Fresh Milk • Half Sweet (50%) • Es Batu Biasa
+              Signature Jasmine Tea • Fresh Milk • Normal Sweet (100%) • Es Batu Biasa
             </span>
           </div>
 
@@ -869,7 +869,7 @@
     // =========================================================================
     let currentTeaBase = 'jasmine';
     let currentMilkBase = 'fresh';
-    let currentSugar = 50;
+    let currentSugar = 100;
     let currentIce = 'water';
     let builderQty = 1;
     let selectedPayment = 'qris';
